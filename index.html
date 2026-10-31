@@ -1,0 +1,632 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Click To Money</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #013220;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 { color: gold; font-size: 42px; }
+
+.para {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 20px;
+}
+
+.rank-kutusu {
+    color: gold;
+    font-size: 22px;
+    margin: 15px;
+    padding: 12px;
+    border: 2px solid gold;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.coin {
+    font-size: 110px;
+    cursor: pointer;
+    display: inline-block;
+    user-select: none;
+    transition: transform .1s;
+}
+
+.coin:active { transform: scale(.85); }
+
+button, select {
+    padding: 12px 18px;
+    margin: 7px;
+    border: 2px solid gold;
+    border-radius: 9px;
+    background: #111;
+    color: gold;
+    font-size: 15px;
+}
+
+button { cursor: pointer; }
+button:hover { background: #333; }
+
+.bolum {
+    background: #06452e;
+    border: 2px solid gold;
+    border-radius: 15px;
+    padding: 15px;
+    margin: 15px auto;
+    max-width: 600px;
+}
+
+.envanter {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    background: #111;
+    border: 2px solid gold;
+    border-radius: 12px;
+    padding: 12px;
+    width: 180px;
+    text-align: left;
+    z-index: 5;
+}
+
+.envanter h3 {
+    color: gold;
+    text-align: center;
+}
+
+.kazanc-alani {
+    position: fixed;
+    left: 25px;
+    top: 40%;
+    width: 150px;
+    height: 180px;
+    pointer-events: none;
+    z-index: 8;
+}
+
+.kazanc-yazisi {
+    position: absolute;
+    left: 10px;
+    bottom: 20px;
+    color: #72ff91;
+    font-size: 25px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px black;
+    white-space: nowrap;
+    animation: yukariCik 1.2s ease-out forwards;
+}
+
+@keyframes yukariCik {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-100px) scale(1.2); }
+}
+
+#araba {
+    margin: 15px auto;
+    width: 130px;
+    height: 55px;
+    border-radius: 20px 25px 10px 10px;
+    position: relative;
+    display: none;
+}
+
+#araba::before {
+    content: "";
+    position: absolute;
+    width: 65px;
+    height: 25px;
+    background: #bdeaff;
+    left: 32px;
+    top: -12px;
+    border-radius: 12px 12px 0 0;
+}
+
+.tekerlek {
+    position: absolute;
+    bottom: -10px;
+    width: 25px;
+    height: 25px;
+    background: black;
+    border: 3px solid gray;
+    border-radius: 50%;
+}
+
+.tekerlek.sol { left: 15px; }
+.tekerlek.sag { right: 15px; }
+
+#bildirim {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: gold;
+    color: black;
+    padding: 15px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    display: none;
+    z-index: 10;
+}
+
+.rebirth {
+    background: #24134b;
+    border-color: #c084fc;
+}
+
+.rebirth h2 { color: #d8b4fe; }
+
+.rebirth button {
+    border-color: #d8b4fe;
+    color: #d8b4fe;
+}
+
+.elmas-bolum {
+    background: #102e46;
+    border-color: #40d9ff;
+}
+
+.elmas-bolum h2 { color: #40d9ff; }
+
+.elmas-bolum button {
+    border-color: #40d9ff;
+    color: #40d9ff;
+}
+
+@media(max-width:700px) {
+    .envanter {
+        position: static;
+        width: 100%;
+        max-width: 400px;
+        margin: 20px auto;
+    }
+
+    .kazanc-alani {
+        left: 0;
+        top: 30%;
+        width: 110px;
+    }
+
+    .kazanc-yazisi { font-size: 19px; }
+    h1 { font-size: 32px; }
+}
+</style>
+</head>
+
+<body>
+
+<h1>💰 Click To Money</h1>
+
+<div class="para">
+    💵 <span id="para">0</span> TL
+</div>
+
+<div class="rank-kutusu">
+    🏆 Rank: <span id="rank">🌱 Ranksiz</span>
+</div>
+
+<p>Toplam kazanılan: <span id="toplam">0</span> TL</p>
+
+<div class="coin" id="coin" onclick="tikla()">🪙</div>
+<p>Para kazanmak için simgeye tıkla!</p>
+
+<div class="kazanc-alani" id="kazancAlani"></div>
+
+<div class="bolum">
+    <h2>⬆️ Geliştirmeler</h2>
+    <p>Tıklama gücü: <span id="guc">1</span></p>
+    <p>Geliştirme fiyatı: <span id="gelistirmeFiyati">50</span> TL</p>
+    <button onclick="gelistir()">Tıklama Gücünü Artır</button>
+</div>
+
+<div class="bolum">
+    <h2>🏠 Ev</h2>
+    <p>Fiyat: 20.000 TL</p>
+    <button onclick="evAl()">Ev Satın Al</button>
+</div>
+
+<div class="bolum">
+    <h2>🚗 Araba</h2>
+    <p>Fiyat: 10.000 TL</p>
+
+    <select id="arabaRengi">
+        <option value="red">Kırmızı</option>
+        <option value="blue">Mavi</option>
+        <option value="black">Siyah</option>
+        <option value="white">Beyaz</option>
+        <option value="yellow">Sarı</option>
+        <option value="green">Yeşil</option>
+    </select>
+
+    <br>
+    <button onclick="arabaAl()">Araba Satın Al</button>
+
+    <div id="araba">
+        <div class="tekerlek sol"></div>
+        <div class="tekerlek sag"></div>
+    </div>
+</div>
+
+<div class="bolum">
+    <h2>🤖 Auto Clicker</h2>
+    <p>Fiyat: 40.000 TL</p>
+    <p>Saniyede <span id="autoGuc">1</span> TL kazandırır.</p>
+    <button onclick="autoClickerAl()">Auto Clicker Satın Al</button>
+    <p id="autoDurum">Henüz satın alınmadı.</p>
+</div>
+
+<div class="bolum elmas-bolum">
+    <h2>💎 Elmas Simge</h2>
+    <p>Fiyat: 100.000 TL</p>
+    <p>Elmas satın alırsan her tıklaman 10 kat kazandırır!</p>
+    <p id="elmasDurum">Henüz satın alınmadı.</p>
+    <button onclick="elmasAl()">💎 Elmas Satın Al</button>
+</div>
+
+<div class="bolum rebirth">
+    <h2>🔄 Yeniden Doğuş</h2>
+    <p>Mevcut yeniden doğuş: <b id="rebirthSayisi">0</b></p>
+    <p>Gerekli para: <b id="rebirthFiyati">50.000</b> TL</p>
+    <p>Kalıcı tıklama bonusu: <b id="bonus">%0</b></p>
+    <p>Her yeniden doğuşta %25 bonus kazanırsın!</p>
+    <p>Şartlar: 🏠 Ev + 🚗 Araba + Gerekli para</p>
+    <button onclick="yenidenDogus()">🔄 Yeniden Doğuş Yap</button>
+</div>
+
+<div class="bolum">
+    <h2>🏆 Başarımlar ve Ranklar</h2>
+    <p>🥉 İlk Adım — 100 TL</p>
+    <p>🥈 Para Biriktirici — 1.000 TL</p>
+    <p>🥇 Zengin — 10.000 TL</p>
+    <p>💎 Milyoner — 100.000 TL</p>
+    <p>🏆 Efsane — 1.000.000 TL</p>
+</div>
+
+<div class="envanter">
+    <h3>🎒 Envanter</h3>
+    <p id="envanterEv">🏠 Ev: Yok</p>
+    <p id="envanterAraba">🚗 Araba: Yok</p>
+    <p id="envanterAuto">🤖 Auto Clicker: Yok</p>
+    <p id="envanterElmas">💎 Elmas: Yok</p>
+</div>
+
+<button onclick="sifirla()">🔄 Oyunu Sıfırla</button>
+
+<div id="bildirim"></div>
+
+<script>
+let kayit = {};
+
+try {
+    kayit = JSON.parse(localStorage.getItem("oyunKayit")) || {};
+} catch (e) {
+    kayit = {};
+}
+
+let para = Number(kayit.para) || 0;
+let guc = Number(kayit.guc) || 1;
+let ev = kayit.ev || false;
+let araba = kayit.araba || false;
+let autoClicker = kayit.autoClicker || false;
+let elmas = kayit.elmas || false;
+let gelistirmeFiyati = Number(kayit.gelistirmeFiyati) || 50;
+let arabaRengi = kayit.arabaRengi || "red";
+
+let toplamKazanilan = Number(
+    localStorage.getItem("toplamKazanilan") ||
+    kayit.toplamKazanilan || 0
+);
+
+let rebirthSayisi = Number(kayit.rebirthSayisi) || 0;
+let rebirthBonusu = Number(kayit.rebirthBonusu) || 0;
+
+const ranklar = [
+    { para: 100, ad: "🥉 İlk Adım" },
+    { para: 1000, ad: "🥈 Para Biriktirici" },
+    { para: 10000, ad: "🥇 Zengin" },
+    { para: 100000, ad: "💎 Milyoner" },
+    { para: 1000000, ad: "🏆 Efsane" }
+];
+
+let mevcutRank = "";
+
+function sayi(n) {
+    return n.toLocaleString("tr-TR");
+}
+
+function kaydet() {
+    localStorage.setItem("oyunKayit", JSON.stringify({
+        para,
+        guc,
+        ev,
+        araba,
+        autoClicker,
+        elmas,
+        gelistirmeFiyati,
+        arabaRengi,
+        toplamKazanilan,
+        rebirthSayisi,
+        rebirthBonusu
+    }));
+
+    localStorage.setItem("toplamKazanilan", toplamKazanilan);
+}
+
+function bildirimGoster(mesaj) {
+    const kutu = document.getElementById("bildirim");
+
+    kutu.innerText = mesaj;
+    kutu.style.display = "block";
+
+    clearTimeout(window.bildirimZamanlayici);
+
+    window.bildirimZamanlayici = setTimeout(() => {
+        kutu.style.display = "none";
+    }, 2500);
+}
+
+function rankGuncelle() {
+    let yeniRank = "🌱 Ranksiz";
+
+    for (let r of ranklar) {
+        if (toplamKazanilan >= r.para) {
+            yeniRank = r.ad;
+        }
+    }
+
+    if (yeniRank !== mevcutRank && yeniRank !== "🌱 Ranksiz") {
+        bildirimGoster("🎉 Yeni rank kazandın: " + yeniRank);
+    }
+
+    mevcutRank = yeniRank;
+    document.getElementById("rank").innerText = yeniRank;
+}
+
+function tiklamaKazanci() {
+    let kazanc = guc * (1 + rebirthBonusu / 100);
+
+    if (elmas) kazanc *= 10;
+
+    return Math.max(1, Math.floor(kazanc));
+}
+
+function kazancYazisiGoster(miktar) {
+    const alan = document.getElementById("kazancAlani");
+    const yazi = document.createElement("div");
+
+    yazi.className = "kazanc-yazisi";
+    yazi.innerText = "+" + sayi(miktar) + " TL";
+    yazi.style.left = (Math.random() * 35) + "px";
+
+    alan.appendChild(yazi);
+
+    setTimeout(() => yazi.remove(), 1300);
+}
+
+function paraKazan(miktar) {
+    para += miktar;
+    toplamKazanilan += miktar;
+
+    kaydet();
+    rankGuncelle();
+    ekraniGuncelle();
+}
+
+function tikla() {
+    const kazanc = tiklamaKazanci();
+    paraKazan(kazanc);
+    kazancYazisiGoster(kazanc);
+}
+
+function gelistir() {
+    if (para >= gelistirmeFiyati) {
+        para -= gelistirmeFiyati;
+        guc++;
+        gelistirmeFiyati += 50;
+
+        bildirimGoster("Tıklama gücün arttı!");
+        kaydet();
+        ekraniGuncelle();
+    } else {
+        bildirimGoster("Yeterli paran yok!");
+    }
+}
+
+function evAl() {
+    if (ev) {
+        bildirimGoster("Zaten evin var!");
+        return;
+    }
+
+    if (para >= 20000) {
+        para -= 20000;
+        ev = true;
+
+        bildirimGoster("🏠 Ev satın alındı!");
+        kaydet();
+        ekraniGuncelle();
+    } else {
+        bildirimGoster("20.000 TL gerekiyor!");
+    }
+}
+
+function arabaAl() {
+    if (araba) {
+        bildirimGoster("Zaten araban var!");
+        return;
+    }
+
+    if (para >= 10000) {
+        para -= 10000;
+        araba = true;
+        arabaRengi = document.getElementById("arabaRengi").value;
+
+        bildirimGoster("🚗 Araba satın alındı!");
+        kaydet();
+        ekraniGuncelle();
+    } else {
+        bildirimGoster("10.000 TL gerekiyor!");
+    }
+}
+
+function autoClickerAl() {
+    if (autoClicker) {
+        bildirimGoster("Auto Clicker zaten sende!");
+        return;
+    }
+
+    if (para >= 40000) {
+        para -= 40000;
+        autoClicker = true;
+
+        bildirimGoster("🤖 Auto Clicker satın alındı!");
+        kaydet();
+        ekraniGuncelle();
+    } else {
+        bildirimGoster("40.000 TL gerekiyor!");
+    }
+}
+
+function elmasAl() {
+    if (elmas) {
+        bildirimGoster("Zaten elmas simgen var!");
+        return;
+    }
+
+    if (para >= 100000) {
+        para -= 100000;
+        elmas = true;
+
+        bildirimGoster("💎 Elmas simge satın alındı!");
+        kaydet();
+        ekraniGuncelle();
+    } else {
+        bildirimGoster("100.000 TL gerekiyor!");
+    }
+}
+
+function rebirthFiyatiHesapla() {
+    return 50000 + rebirthSayisi * 10000;
+}
+
+function yenidenDogus() {
+    const fiyat = rebirthFiyatiHesapla();
+
+    if (!ev || !araba) {
+        bildirimGoster("Önce ev ve araba satın almalısın!");
+        return;
+    }
+
+    if (para < fiyat) {
+        bildirimGoster(sayi(fiyat) + " TL gerekiyor!");
+        return;
+    }
+
+    if (!confirm(
+        "Yeniden doğuş yapmak istiyor musun?\n\n" +
+        "Para, ev, araba, Auto Clicker ve geliştirmelerin sıfırlanacak!\n" +
+        "Elmas simgen korunacak."
+    )) return;
+
+    rebirthSayisi++;
+    rebirthBonusu += 25;
+
+    para = 0;
+    guc = 1;
+    ev = false;
+    araba = false;
+    autoClicker = false;
+    gelistirmeFiyati = 50;
+    arabaRengi = "red";
+
+    bildirimGoster("🔥 Yeniden doğuş! Bonus: %" + rebirthBonusu);
+
+    kaydet();
+    ekraniGuncelle();
+}
+
+function ekraniGuncelle() {
+    document.getElementById("para").innerText = sayi(para);
+    document.getElementById("toplam").innerText = sayi(toplamKazanilan);
+    document.getElementById("guc").innerText = guc;
+
+    document.getElementById("gelistirmeFiyati").innerText =
+        sayi(gelistirmeFiyati);
+
+    document.getElementById("autoGuc").innerText =
+        sayi(tiklamaKazanci());
+
+    document.getElementById("rebirthSayisi").innerText = rebirthSayisi;
+
+    document.getElementById("rebirthFiyati").innerText =
+        sayi(rebirthFiyatiHesapla());
+
+    document.getElementById("bonus").innerText =
+        "%" + rebirthBonusu;
+
+    document.getElementById("coin").innerText = elmas ? "💎" : "🪙";
+
+    document.getElementById("elmasDurum").innerText =
+        elmas ? "✅ Elmas simge aktif! 10 kat kazanç." : "Henüz satın alınmadı.";
+
+    document.getElementById("envanterEv").innerText =
+        "🏠 Ev: " + (ev ? "Var" : "Yok");
+
+    document.getElementById("envanterAraba").innerText =
+        "🚗 Araba: " + (araba ? "Var" : "Yok");
+
+    document.getElementById("envanterAuto").innerText =
+        "🤖 Auto Clicker: " + (autoClicker ? "Var" : "Yok");
+
+    document.getElementById("envanterElmas").innerText =
+        "💎 Elmas: " + (elmas ? "Var" : "Yok");
+
+    document.getElementById("autoDurum").innerText =
+        autoClicker ? "✅ Aktif!" : "Henüz satın alınmadı.";
+
+    const arabaKutusu = document.getElementById("araba");
+
+    if (araba) {
+        arabaKutusu.style.display = "block";
+        arabaKutusu.style.background = arabaRengi;
+    } else {
+        arabaKutusu.style.display = "none";
+    }
+
+    document.getElementById("arabaRengi").value = arabaRengi;
+
+    kaydet();
+}
+
+function sifirla() {
+    if (confirm("Bütün oyun ilerlemen ve elmas simgen silinsin mi?")) {
+        localStorage.removeItem("oyunKayit");
+        localStorage.removeItem("toplamKazanilan");
+        location.reload();
+    }
+}
+
+rankGuncelle();
+ekraniGuncelle();
+
+// Auto Clicker oyun açıkken saniyede bir para kazandırır.
+setInterval(() => {
+    if (autoClicker) {
+        paraKazan(tiklamaKazanci());
+    }
+}, 1000);
+</script>
+
+</body>
+</html>
